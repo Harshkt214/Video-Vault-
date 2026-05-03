@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content Vault v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0c0f;
+  --s1: #131318;
+  --s2: #1a1a22;
+  --s3: #22222e;
+  --border: #2c2c3a;
+  --border2: #3a3a4e;
+  --accent: #c8f55a;
+  --accent-dim: rgba(200,245,90,0.08);
+  --accent2: #5af5c8;
+  --accent3: #f55a8c;
+  --orange: #f5a55a;
+  --text: #eeeef5;
+  --muted: #7070a0;
+  --dim: #3a3a55;
+  --red: #f55a5a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Syne',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:sticky;top:0;z-index:200;
+  height:52px;
+  background:rgba(12,12,15,0.95);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;gap:12px;
+}
+.logo{
+  font-family:'Instrument Serif',serif;
+  font-size:17px;font-style:italic;
+  color:var(--accent);letter-spacing:-0.3px;
+  white-space:nowrap;
+}
+.logo b{font-style:normal;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;}
+.topbar-center{display:flex;gap:4px;}
+.vtab-top{
+  padding:5px 14px;font-size:12px;font-weight:700;
+  border-radius:5px;cursor:pointer;
+  color:var(--muted);border:1px solid transparent;
+  transition:all 0.15s;white-space:nowrap;
+}
+.vtab-top:hover{color:var(--text);}
+.vtab-top.on{border-color:var(--border2);background:var(--s2);color:var(--accent);}
+.topbar-right{display:flex;gap:8px;align-items:center;}
+.day-chip{
+  font-family:'DM Mono',monospace;font-size:10px;
+  padding:4px 10px;border-radius:4px;
+  background:var(--s2);border:1px solid var(--border);
+  color:var(--muted);letter-spacing:0.5px;white-space:nowrap;
+}
+.btn{
+  padding:7px 14px;font-size:11.5px;font-weight:700;
+  font-family:'Syne',sans-serif;border:none;cursor:pointer;
+  border-radius:5px;transition:all 0.15s;letter-spacing:0.3px;
+}
+.btn-y{background:var(--accent);color:#000;}
+.btn-y:hover{filter:brightness(1.1);transform:translateY(-1px);}
+.btn-g{background:var(--s2);color:var(--muted);border:1px solid var(--border);}
+.btn-g:hover{color:var(--text);border-color:var(--border2);}
+.btn-sm{padding:5px 10px;font-size:11px;}
+
+/* ── LAYOUT ── */
+.body{display:flex;height:calc(100vh - 52px);}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:200px;flex-shrink:0;
+  background:var(--s1);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  padding:14px 0;gap:2px;
+  overflow-y:auto;
+}
+.sb-sec{
+  font-family:'DM Mono',monospace;font-size:9px;
+  color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;
+  padding:8px 14px 3px;margin-top:4px;
+}
+.sb-item{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 14px;cursor:pointer;
+  font-size:12.5px;font-weight:700;
+  color:var(--muted);
+  border-left:2px solid transparent;
+  transition:all 0.12s;
+}
+.sb-item:hover{color:var(--text);background:var(--s2);}
+.sb-item.on{color:var(--accent);border-left-color:var(--accent);background:var(--accent-dim);}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.sb-badge{
+  margin-left:auto;font-family:'DM Mono',monospace;font-size:9px;
+  background:var(--s3);color:var(--dim);
+  padding:2px 5px;border-radius:3px;
+}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-y:auto;padding:24px 28px;display:flex;flex-direction:column;gap:20px;}
+.main::-webkit-scrollbar{width:4px;}
+.main::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+/* ── PAGE ── */
+.page{display:none;flex-direction:column;gap:20px;}
+.page.on{display:flex;}
+
+/* ── PAGE HEADER ── */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.ph-title{
+  font-family:'Instrument Serif',serif;
+  font-size:26px;font-style:italic;
+  letter-spacing:-0.5px;line-height:1;
+}
+.ph-title span{font-style:normal;font-family:'Syne',sans-serif;font-weight:800;}
+.ph-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:5px;letter-spacing:0.3px;}
+.ph-actions{display:flex;gap:8px;align-items:center;flex-shrink:0;}
+
+/* ── CARD ── */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.ch{
+  padding:11px 16px;border-bottom:1px solid var(--border);
+  background:var(--s2);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.ch-title{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.cb{padding:16px;}
+
+/* ── STATS ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.stat{background:var(--s1);border:1px solid var(--border);border-radius:7px;padding:12px 14px;}
+.stat-l{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:4px;}
+.stat-v{font-family:'Instrument Serif',serif;font-size:28px;letter-spacing:-1px;line-height:1;}
+.stat-s{font-size:10px;color:var(--muted);margin-top:2px;}
+
+/* ── VOICE UPLOAD ── */
+.voice-zone{
+  display:flex;flex-direction:column;gap:12px;
+}
+.voice-upload-area{
+  border:2px dashed var(--border2);border-radius:8px;
+  padding:20px;text-align:center;cursor:pointer;
+  transition:all 0.2s;background:var(--s2);
+  position:relative;
+}
+.voice-upload-area:hover{border-color:var(--accent);background:var(--accent-dim);}
+.voice-upload-area.has-file{border-color:var(--accent2);border-style:solid;background:rgba(90,245,200,0.05);}
+.vue-icon{font-size:28px;margin-bottom:8px;}
+.vue-label{font-size:13px;font-weight:700;color:var(--text);}
+.vue-sub{font-size:11px;color:var(--muted);margin-top:3px;font-family:'DM Mono',monospace;}
+.vue-input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.audio-player{
+  background:var(--s2);border:1px solid var(--border2);border-radius:7px;
+  padding:12px 14px;display:flex;align-items:center;gap:12px;
+}
+.audio-fname{font-size:12px;font-weight:700;color:var(--accent2);flex:1;truncate:ellipsis;overflow:hidden;white-space:nowrap;}
+.audio-el{flex:1;height:32px;filter:invert(0.15) sepia(1) saturate(5) hue-rotate(80deg);}
+.audio-remove{background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;padding:2px 4px;border-radius:3px;}
+.audio-remove:hover{background:rgba(245,90,90,0.1);}
+
+/* ── SCRIPT ── */
+.script-ta{
+  width:100%;min-height:110px;
+  background:var(--s2);border:1px solid var(--border);border-radius:6px;
+  padding:12px;color:var(--text);
+  font-family:'Instrument Serif',serif;font-size:14px;line-height:1.7;
+  resize:vertical;outline:none;transition:border-color 0.15s;
+}
+.script-ta:focus{border-color:var(--accent);}
+.script-ta::placeholder{color:var(--dim);font-style:italic;}
+.wc{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:right;margin-top:4px;}
+
+/* ── IMAGE GRID ── */
+.img-grid-controls{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;gap:10px;
+}
+.img-filter{display:flex;gap:4px;}
+.filter-btn{
+  padding:4px 10px;font-size:10px;font-weight:700;
+  font-family:'DM Mono',monospace;
+  border:1px solid var(--border);background:var(--s2);
+  color:var(--muted);border-radius:4px;cursor:pointer;transition:all 0.12s;
+}
+.filter-btn:hover{color:var(--text);}
+.filter-btn.on{background:var(--s3);color:var(--accent);border-color:var(--border2);}
+
+.img-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:10px;
+  max-height:520px;overflow-y:auto;
+  padding-right:4px;
+}
+.img-grid::-webkit-scrollbar{width:3px;}
+.img-grid::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+.img-slot{
+  background:var(--s2);border:1px solid var(--border);border-radius:7px;
+  overflow:hidden;display:flex;flex-direction:column;
+  transition:border-color 0.15s;position:relative;
+}
+.img-slot:hover{border-color:var(--border2);}
+.img-slot.has-img{border-color:var(--accent2);}
+.img-slot.has-prompt-only{border-color:var(--dim);}
+
+.img-num{
+  position:absolute;top:6px;left:6px;
+  font-family:'DM Mono',monospace;font-size:9px;font-weight:500;
+  background:rgba(12,12,15,0.85);color:var(--muted);
+  padding:2px 5px;border-radius:3px;z-index:2;
+}
+.img-status-dot{
+  position:absolute;top:6px;right:6px;
+  width:7px;height:7px;border-radius:50%;z-index:2;
+}
+
+/* image upload area inside slot */
+.slot-img-area{
+  width:100%;aspect-ratio:16/9;
+  background:var(--s3);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;overflow:hidden;
+  transition:background 0.15s;
+}
+.slot-img-area:hover{background:var(--border);}
+.slot-preview{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+.slot-upload-hint{font-size:20px;opacity:0.4;}
+.slot-upload-label{font-size:9px;color:var(--muted);margin-top:3px;font-family:'DM Mono',monospace;}
+.slot-img-input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+
+.slot-body{padding:8px;}
+.slot-prompt-input{
+  width:100%;background:transparent;border:none;
+  border-bottom:1px dashed var(--border2);
+  color:var(--text);font-size:11px;
+  font-family:'Syne',sans-serif;
+  padding:4px 0;outline:none;line-height:1.4;
+  transition:border-color 0.12s;resize:none;
+  min-height:44px;max-height:80px;overflow-y:auto;
+}
+.slot-prompt-input:focus{border-bottom-color:var(--accent);}
+.slot-prompt-input::placeholder{color:var(--dim);font-size:10px;}
+
+.slot-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:6px 8px;border-top:1px solid var(--border);
+  gap:4px;
+}
+.slot-type-sel{
+  background:transparent;border:none;
+  color:var(--muted);font-size:9px;font-family:'DM Mono',monospace;
+  cursor:pointer;outline:none;flex:1;
+}
+.slot-type-sel option{background:var(--s2);}
+.slot-status-btn{
+  font-size:9px;font-family:'DM Mono',monospace;
+  padding:2px 6px;border-radius:3px;cursor:pointer;border:none;
+  transition:all 0.12s;white-space:nowrap;
+}
+.s-empty{background:rgba(112,112,160,0.1);color:var(--muted);}
+.s-drafted{background:rgba(245,165,90,0.1);color:var(--orange);}
+.s-ready{background:rgba(200,245,90,0.1);color:var(--accent);}
+.s-done{background:rgba(90,245,200,0.1);color:var(--accent2);}
+
+.slot-del{
+  background:none;border:none;color:var(--dim);cursor:pointer;
+  font-size:12px;padding:2px;transition:color 0.12s;
+}
+.slot-del:hover{color:var(--red);}
+
+/* ── PROGRESS ── */
+.pbar-wrap{display:flex;align-items:center;gap:10px;}
+.pbar{background:var(--s3);border-radius:3px;height:5px;flex:1;overflow:hidden;}
+.pbar-fill{height:100%;border-radius:3px;transition:width 0.4s ease;}
+.pbar-lbl{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap;}
+
+/* ── WEEK GRID ── */
+.wgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
+.wday{
+  background:var(--s2);border:1px solid var(--border);border-radius:6px;
+  padding:10px 8px;text-align:center;
+}
+.wday.today{border-color:var(--accent);background:var(--accent-dim);}
+.wday-name{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;}
+.wday.today .wday-name{color:var(--accent);}
+.wday-task{font-size:11px;font-weight:800;line-height:1.3;}
+.wday-desc{font-size:9px;color:var(--muted);margin-top:3px;line-height:1.3;}
+
+/* ── EXPORT ── */
+.export-pre{
+  background:var(--s2);border:1px solid var(--border);border-radius:6px;
+  padding:14px;font-family:'DM Mono',monospace;font-size:11px;
+  color:var(--muted);white-space:pre-wrap;
+  max-height:400px;overflow-y:auto;line-height:1.7;
+}
+.export-pre::-webkit-scrollbar{width:3px;}
+.export-pre::-webkit-scrollbar-thumb{background:var(--border);}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:24px;right:24px;z-index:999;
+  background:var(--accent);color:#000;
+  padding:10px 18px;border-radius:6px;
+  font-size:12px;font-weight:800;
+  opacity:0;transform:translateY(10px);
+  transition:all 0.2s;pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateY(0);}
+
+/* ── FIELD ── */
+.field{display:flex;flex-direction:column;gap:5px;}
+.flabel{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.8px;text-transform:uppercase;}
+.finput{
+  background:var(--s2);border:1px solid var(--border);border-radius:5px;
+  padding:8px 11px;color:var(--text);font-size:12.5px;
+  font-family:'Syne',sans-serif;outline:none;transition:border-color 0.15s;
+}
+.finput:focus{border-color:var(--accent);}
+.finput::placeholder{color:var(--dim);}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+
+.tag{display:inline-block;font-size:9px;font-family:'DM Mono',monospace;padding:2px 7px;border-radius:3px;margin-right:3px;}
+.tag-sun{background:rgba(200,245,90,0.12);color:var(--accent);}
+.tag-gen{background:rgba(90,245,200,0.1);color:var(--accent2);}
+.tag-edit{background:rgba(245,90,140,0.1);color:var(--accent3);}
+
+.sep{height:1px;background:var(--border);}
+.tip{background:rgba(200,245,90,0.05);border:1px solid rgba(200,245,90,0.15);border-radius:6px;padding:11px 14px;font-size:12px;color:var(--muted);line-height:1.6;}
+.tip strong{color:var(--accent);}
+
+/* Sunday checklist */
+.stask{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+.stask:last-child{border-bottom:none;}
+.stask input[type=checkbox]{accent-color:var(--accent);width:14px;height:14px;flex-shrink:0;cursor:pointer;}
+.stask-text{font-size:13px;flex:1;}
+.stask.done .stask-text{text-decoration:line-through;color:var(--muted);}
+.stask-del{background:none;border:none;color:var(--dim);cursor:pointer;font-size:13px;padding:2px;}
+.stask-del:hover{color:var(--red);}
+
+/* Script overview rows */
+.sov-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);}
+.sov-row:last-child{border-bottom:none;}
+
+/* ── PIN LOCK ── */
+#pin-overlay{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:0;
+  transition:opacity 0.5s ease, transform 0.5s ease;
+}
+#pin-overlay.unlocking{
+  opacity:0;transform:scale(1.04);pointer-events:none;
+}
+.pin-logo{
+  font-family:'Instrument Serif',serif;
+  font-size:22px;font-style:italic;
+  color:var(--accent);letter-spacing:-0.3px;
+  margin-bottom:32px;
+}
+.pin-logo b{font-style:normal;font-family:'Syne',sans-serif;font-size:19px;font-weight:800;}
+.pin-label{
+  font-family:'DM Mono',monospace;font-size:10px;
+  color:var(--muted);letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:20px;
+}
+.pin-dots{
+  display:flex;gap:14px;margin-bottom:28px;
+}
+.pin-dot{
+  width:12px;height:12px;border-radius:50%;
+  border:2px solid var(--border2);
+  background:transparent;
+  transition:all 0.15s;
+}
+.pin-dot.filled{
+  background:var(--accent);border-color:var(--accent);
+  box-shadow:0 0 10px rgba(200,245,90,0.4);
+}
+.pin-dot.error{
+  background:var(--red);border-color:var(--red);
+  animation:shake 0.4s ease;
+}
+.pin-pad{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:8px;width:220px;
+}
+.pin-key{
+  height:56px;
+  background:var(--s1);border:1px solid var(--border);border-radius:8px;
+  color:var(--text);font-family:'Syne',sans-serif;font-size:20px;font-weight:700;
+  cursor:pointer;transition:all 0.1s;
+  display:flex;align-items:center;justify-content:center;
+}
+.pin-key:hover{background:var(--s2);border-color:var(--border2);color:var(--accent);}
+.pin-key:active{transform:scale(0.94);background:var(--s3);}
+.pin-key.del{font-size:16px;color:var(--muted);}
+.pin-key.del:hover{color:var(--red);}
+.pin-err-msg{
+  font-family:'DM Mono',monospace;font-size:10px;color:var(--red);
+  margin-top:16px;letter-spacing:0.5px;
+  opacity:0;transition:opacity 0.2s;height:14px;
+}
+.pin-err-msg.show{opacity:1;}
+@keyframes shake{
+  0%,100%{transform:translateX(0);}
+  20%{transform:translateX(-6px);}
+  40%{transform:translateX(6px);}
+  60%{transform:translateX(-4px);}
+  80%{transform:translateX(4px);}
+}
+
+/* Mobile note */
+@media(max-width:640px){
+  .sidebar{display:none;}
+  .stats{grid-template-columns:1fr 1fr;}
+  .img-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}
+  .wgrid{grid-template-columns:repeat(4,1fr);}
+  .grid2,.grid3{grid-template-columns:1fr;}
+  .main{padding:16px;}
+  .topbar-center{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- PIN LOCK -->
+<div id="pin-overlay">
+  <div class="pin-logo"><b>Content</b> Vault <i>v2</i></div>
+  <div class="pin-label">Enter PIN to unlock</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
+  </div>
+  <div class="pin-pad">
+    <div class="pin-key" onclick="pinPress('1')">1</div>
+    <div class="pin-key" onclick="pinPress('2')">2</div>
+    <div class="pin-key" onclick="pinPress('3')">3</div>
+    <div class="pin-key" onclick="pinPress('4')">4</div>
+    <div class="pin-key" onclick="pinPress('5')">5</div>
+    <div class="pin-key" onclick="pinPress('6')">6</div>
+    <div class="pin-key" onclick="pinPress('7')">7</div>
+    <div class="pin-key" onclick="pinPress('8')">8</div>
+    <div class="pin-key" onclick="pinPress('9')">9</div>
+    <div class="pin-key" style="visibility:hidden"></div>
+    <div class="pin-key" onclick="pinPress('0')">0</div>
+    <div class="pin-key del" onclick="pinDel()">⌫</div>
+  </div>
+  <div class="pin-err-msg" id="pin-err">Incorrect PIN. Try again.</div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo"><b>Content</b> Vault <i>v2</i></div>
+  <div class="topbar-center">
+    <div class="vtab-top on" onclick="switchPage('dashboard',this,'nav-dash')">Dashboard</div>
+    <div class="vtab-top" onclick="switchPage('schedule',this,'nav-sched')">Schedule</div>
+    <div class="vtab-top" onclick="switchPage('video1',this,'nav-v1')">Video 1</div>
+    <div class="vtab-top" onclick="switchPage('video2',this,'nav-v2')">Video 2</div>
+    <div class="vtab-top" onclick="switchPage('video3',this,'nav-v3')">Video 3</div>
+    <div class="vtab-top" onclick="switchPage('export',this,'nav-exp')">Export</div>
+  </div>
+  <div class="topbar-right">
+    <div class="day-chip" id="dayChip">—</div>
+    <button class="btn btn-g btn-sm" onclick="exportJSON()">⬇ JSON</button>
+    <button class="btn btn-y btn-sm" onclick="saveAll()">Save All</button>
+  </div>
+</div>
+
+<div class="body">
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sb-sec">Overview</div>
+  <div class="sb-item on" id="nav-dash" onclick="switchPage('dashboard',this,'nav-dash')"><span class="sb-dot" style="background:var(--accent)"></span>Dashboard</div>
+  <div class="sb-item" id="nav-sched" onclick="switchPage('schedule',this,'nav-sched')"><span class="sb-dot" style="background:var(--accent2)"></span>Schedule</div>
+  <div class="sb-sec">Videos</div>
+  <div class="sb-item" id="nav-v1" onclick="switchPage('video1',this,'nav-v1')"><span class="sb-dot" style="background:#f5a55a"></span>Video 1 <span class="sb-badge" id="badge-v1">0/35</span></div>
+  <div class="sb-item" id="nav-v2" onclick="switchPage('video2',this,'nav-v2')"><span class="sb-dot" style="background:#5a8cf5"></span>Video 2 <span class="sb-badge" id="badge-v2">0/40</span></div>
+  <div class="sb-item" id="nav-v3" onclick="switchPage('video3',this,'nav-v3')"><span class="sb-dot" style="background:#c55af5"></span>Video 3 <span class="sb-badge" id="badge-v3">0/40</span></div>
+  <div class="sb-sec">Tools</div>
+  <div class="sb-item" id="nav-exp" onclick="switchPage('export',this,'nav-exp')"><span class="sb-dot" style="background:var(--accent3)"></span>Export</div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="main">
+
+<!-- ── DASHBOARD ── -->
+<div class="page on" id="page-dashboard">
+  <div class="ph">
+    <div>
+      <div class="ph-title">Content <span>Vault</span></div>
+      <div class="ph-sub">3 VIDEOS · 115 PROMPTS · WEEKLY PRODUCTION OS</div>
+    </div>
+    <div class="ph-actions">
+      <button class="btn btn-g btn-sm" onclick="if(confirm('Reset all data?')){resetAll();}">Reset</button>
+    </div>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="card">
+      <div class="ch"><div class="ch-title">Scripts</div></div>
+      <div class="cb" id="dash-scripts"></div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ch-title">Voice Files</div></div>
+      <div class="cb" id="dash-voice"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ch-title">Prompt Progress</div></div>
+    <div class="cb" style="display:flex;flex-direction:column;gap:12px" id="dash-progress"></div>
+  </div>
+  <div class="tip"><strong>Sunday flow:</strong> Script → Voice upload → All 35/40/40 image prompts + upload generated images. Then Mon/Wed/Fri you only generate images. Tue/Thu/Sat you edit.</div>
+</div>
+
+<!-- ── SCHEDULE ── -->
+<div class="page" id="page-schedule">
+  <div class="ph">
+    <div>
+      <div class="ph-title">Week <span>Schedule</span></div>
+      <div class="ph-sub">SUN LOAD · MON/WED/FRI GENERATE · TUE/THU/SAT EDIT</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ch-title">Weekly Rhythm</div></div>
+    <div class="cb"><div class="wgrid" id="wgrid"></div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ch-title">Sunday Checklist</div><button class="btn btn-g btn-sm" onclick="addTask()">+ Add</button></div>
+    <div class="cb" id="task-list"></div>
+  </div>
+</div>
+
+<!-- ── VIDEO PAGES (built by JS) ── -->
+<div class="page" id="page-video1"></div>
+<div class="page" id="page-video2"></div>
+<div class="page" id="page-video3"></div>
+
+<!-- ── EXPORT ── -->
+<div class="page" id="page-export">
+  <div class="ph">
+    <div>
+      <div class="ph-title">Export <span>/ Review</span></div>
+      <div class="ph-sub">FULL TEXT DUMP — PROMPTS + SCRIPTS</div>
+    </div>
+    <div class="ph-actions">
+      <button class="btn btn-g btn-sm" onclick="copyExport()">Copy</button>
+      <button class="btn btn-y btn-sm" onclick="exportJSON()">⬇ Download JSON</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ch-title">Preview</div></div>
+    <div class="cb"><div class="export-pre" id="export-pre">—</div></div>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /body -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── PIN LOCK ─────────────────────────────────────────────
+(function pinInit(){
+  const CORRECT = '2604'; // ← change this to your PIN
+  let entered = '';
+
+  // keyboard support
+  document.addEventListener('keydown', e => {
+    if(!document.getElementById('pin-overlay').classList.contains('unlocking')){
+      if(e.key >= '0' && e.key <= '9') pinPress(e.key);
+      if(e.key === 'Backspace') pinDel();
+    }
+  });
+
+  window.pinPress = function(d){
+    if(entered.length >= 4) return;
+    entered += d;
+    updateDots();
+    if(entered.length === 4) setTimeout(checkPin, 80);
+  };
+
+  window.pinDel = function(){
+    entered = entered.slice(0,-1);
+    updateDots();
+    clearErr();
+  };
+
+  function updateDots(){
+    for(let i=0;i<4;i++){
+      const dot = document.getElementById('pd'+i);
+      dot.classList.toggle('filled', i < entered.length);
+      dot.classList.remove('error');
+    }
+  }
+
+  function checkPin(){
+    if(entered === CORRECT){
+      const ov = document.getElementById('pin-overlay');
+      ov.classList.add('unlocking');
+      setTimeout(()=>{ ov.style.display='none'; }, 500);
+    } else {
+      // shake the dots red
+      for(let i=0;i<4;i++){
+        const dot = document.getElementById('pd'+i);
+        dot.classList.remove('filled');
+        dot.classList.add('error');
+      }
+      document.getElementById('pin-err').classList.add('show');
+      setTimeout(()=>{
+        entered = '';
+        updateDots();
+        clearErr();
+      }, 900);
+    }
+  }
+
+  function clearErr(){
+    document.getElementById('pin-err').classList.remove('show');
+  }
+})();
+
+// ── CONFIG ──────────────────────────────────────────────
+const VIDS = [
+  {id:'video1', label:'Video 1', color:'#f5a55a', count:35},
+  {id:'video2', label:'Video 2', color:'#5a8cf5', count:40},
+  {id:'video3', label:'Video 3', color:'#c55af5', count:40},
+];
+const WEEK = [
+  {d:'SUN',task:'Load Day',desc:'Script · Voice · Prompts',color:'var(--accent)',active:true},
+  {d:'MON',task:'Video 1',desc:'Image generation',color:'#f5a55a'},
+  {d:'TUE',task:'Video 1',desc:'Editing',color:'#f5a55a'},
+  {d:'WED',task:'Video 2',desc:'Image generation',color:'#5a8cf5'},
+  {d:'THU',task:'Video 2',desc:'Editing',color:'#5a8cf5'},
+  {d:'FRI',task:'Video 3',desc:'Image generation',color:'#c55af5'},
+  {d:'SAT',task:'Video 3',desc:'Editing',color:'#c55af5'},
+];
+
+// ── STATE ────────────────────────────────────────────────
+function mkImages(n){ return Array.from({length:n},(_,i)=>({id:i+1,prompt:'',type:'',status:'empty',imgData:null,imgName:''})); }
+const DEF = {
+  sunday_tasks:[
+    {id:1,text:'Write all 3 scripts',done:false},
+    {id:2,text:'Generate + upload Voice for Video 1 (ElevenLabs)',done:false},
+    {id:3,text:'Generate + upload Voice for Video 2',done:false},
+    {id:4,text:'Generate + upload Voice for Video 3',done:false},
+    {id:5,text:'Write & upload 35 image prompts/images — Video 1',done:false},
+    {id:6,text:'Write & upload 40 image prompts/images — Video 2',done:false},
+    {id:7,text:'Write & upload 40 image prompts/images — Video 3',done:false},
+    {id:8,text:'Export + backup JSON',done:false},
+  ],
+  videos:{
+    video1:{script:'',voice_tool:'ElevenLabs',voice_style:'',voice_notes:'',voiceData:null,voiceName:'',images:mkImages(35)},
+    video2:{script:'',voice_tool:'ElevenLabs',voice_style:'',voice_notes:'',voiceData:null,voiceName:'',images:mkImages(40)},
+    video3:{script:'',voice_tool:'ElevenLabs',voice_style:'',voice_notes:'',voiceData:null,voiceName:'',images:mkImages(40)},
+  }
+};
+
+let S = loadS();
+
+function loadS(){
+  try{
+    const raw = localStorage.getItem('cv2');
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return JSON.parse(JSON.stringify(DEF));
+}
+function saveS(){
+  try{ localStorage.setItem('cv2', JSON.stringify(S)); } catch(e){
+    toast('Storage full — download JSON to backup','#f55a5a');
+  }
+}
+function resetAll(){
+  S = JSON.parse(JSON.stringify(DEF));
+  saveS();
+  renderDash();
+  toast('Reset complete');
+}
+
+// ── NAVIGATION ───────────────────────────────────────────
+let curPage = 'dashboard';
+function switchPage(id, elTop, elSide){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.vtab-top').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.sb-item').forEach(s=>s.classList.remove('on'));
+  document.getElementById('page-'+id).classList.add('on');
+  if(elTop && elTop.classList) elTop.classList.add('on');
+  const se = document.getElementById(elSide);
+  if(se) se.classList.add('on');
+  curPage = id;
+  if(id.startsWith('video')) buildVPage(id);
+  if(id==='dashboard') renderDash();
+  if(id==='schedule') renderSchedule();
+  if(id==='export') renderExport();
+}
+
+// ── VIDEO PAGE ────────────────────────────────────────────
+function buildVPage(vid){
+  const cfg = VIDS.find(v=>v.id===vid);
+  const vs = S.videos[vid];
+  const pg = document.getElementById('page-'+vid);
+  pg.innerHTML = `
+    <div class="ph">
+      <div>
+        <div class="ph-title" style="color:${cfg.color}">${cfg.label}</div>
+        <div class="ph-sub">${cfg.count} IMAGE SLOTS · SCRIPT + VOICE + IMAGES</div>
+      </div>
+      <div class="ph-actions">
+        <span class="tag tag-sun">SUN</span>
+        <button class="btn btn-y btn-sm" onclick="saveVid('${vid}')">Save</button>
+      </div>
+    </div>
+
+    <!-- SCRIPT -->
+    <div class="card">
+      <div class="ch"><div class="ch-title">📝 Script</div></div>
+      <div class="cb">
+        <textarea class="script-ta" id="${vid}-script" placeholder="Paste your full video script here..."
+          oninput="wcUpdate('${vid}')">${vs.script}</textarea>
+        <div class="wc" id="${vid}-wc">${wordCount(vs.script)} words</div>
+      </div>
+    </div>
+
+    <!-- VOICE -->
+    <div class="card">
+      <div class="ch">
+        <div class="ch-title">🎙 Voice — ElevenLabs Upload</div>
+        <span class="tag tag-sun">SUN upload</span>
+      </div>
+      <div class="cb">
+        <div class="voice-zone">
+          <div class="grid2">
+            <div class="field">
+              <div class="flabel">Voice Style / Name</div>
+              <input class="finput" id="${vid}-vstyle" placeholder="e.g. Rachel, Calm Narration..." value="${vs.voice_style}">
+            </div>
+            <div class="field">
+              <div class="flabel">Voice Notes / Prompt</div>
+              <input class="finput" id="${vid}-vnotes" placeholder="Pace, emphasis, accent notes..." value="${vs.voice_notes}">
+            </div>
+          </div>
+
+          <!-- UPLOAD ZONE -->
+          <div id="${vid}-voice-zone">
+            ${vs.voiceData ? renderAudioPlayer(vid, vs.voiceName) : renderVoiceUpload(vid)}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IMAGE SLOTS -->
+    <div class="card">
+      <div class="ch">
+        <div class="ch-title">🖼 Images + Prompts — ${cfg.count} slots</div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span class="tag tag-sun">SUN write</span>
+          <span class="tag tag-gen">${vid==='video1'?'MON':vid==='video2'?'WED':'FRI'} gen</span>
+        </div>
+      </div>
+      <div class="cb" style="padding-bottom:8px">
+        <div class="img-grid-controls">
+          <div class="img-filter" id="${vid}-filter">
+            <div class="filter-btn on" onclick="filterSlots('${vid}','all',this)">All</div>
+            <div class="filter-btn" onclick="filterSlots('${vid}','empty',this)">Empty</div>
+            <div class="filter-btn" onclick="filterSlots('${vid}','drafted',this)">Drafted</div>
+            <div class="filter-btn" onclick="filterSlots('${vid}','ready',this)">Ready</div>
+            <div class="filter-btn" onclick="filterSlots('${vid}','done',this)">Done</div>
+          </div>
+          <button class="btn btn-g btn-sm" onclick="markAllReady('${vid}')">Mark All Ready</button>
+        </div>
+        <div class="img-grid" id="${vid}-grid"></div>
+        <div style="margin-top:12px">
+          <div class="pbar-wrap">
+            <div class="pbar"><div class="pbar-fill" id="${vid}-pbar" style="width:0%;background:${cfg.color}"></div></div>
+            <div class="pbar-lbl" id="${vid}-plbl">0/${cfg.count}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Voice upload listener
+  setupVoiceUpload(vid);
+  renderSlots(vid, 'all');
+  updatePBar(vid);
+}
+
+function renderVoiceUpload(vid){
+  return `
+    <div class="voice-upload-area" id="${vid}-vzone">
+      <input type="file" class="vue-input" accept="audio/*,.mp3,.wav,.m4a,.ogg"
+        onchange="handleVoiceFile('${vid}',this)">
+      <div class="vue-icon">🎵</div>
+      <div class="vue-label">Upload ElevenLabs Voice File</div>
+      <div class="vue-sub">.mp3 / .wav / .m4a — tap or drag</div>
+    </div>`;
+}
+
+function renderAudioPlayer(vid, name){
+  const vs = S.videos[vid];
+  return `
+    <div class="audio-player">
+      <span style="font-size:18px">🎵</span>
+      <span class="audio-fname">${name||'voice.mp3'}</span>
+      <audio class="audio-el" controls src="${vs.voiceData}"></audio>
+      <button class="audio-remove" title="Remove voice" onclick="removeVoice('${vid}')">✕</button>
+    </div>`;
+}
+
+function setupVoiceUpload(vid){
+  // Already handled via inline onchange in the input
+}
+
+function handleVoiceFile(vid, input){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    S.videos[vid].voiceData = e.target.result;
+    S.videos[vid].voiceName = file.name;
+    saveS();
+    const zone = document.getElementById(vid+'-voice-zone');
+    if(zone) zone.innerHTML = renderAudioPlayer(vid, file.name);
+    toast('Voice uploaded: ' + file.name);
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeVoice(vid){
+  S.videos[vid].voiceData = null;
+  S.videos[vid].voiceName = '';
+  saveS();
+  const zone = document.getElementById(vid+'-voice-zone');
+  if(zone) zone.innerHTML = renderVoiceUpload(vid);
+  toast('Voice removed');
+}
+
+// ── IMAGE SLOTS ───────────────────────────────────────────
+let currentFilter = {};
+
+function renderSlots(vid, filter){
+  currentFilter[vid] = filter;
+  const cfg = VIDS.find(v=>v.id===vid);
+  const grid = document.getElementById(vid+'-grid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  S.videos[vid].images.forEach((img, idx) => {
+    if(filter !== 'all' && img.status !== filter) return;
+    const slot = document.createElement('div');
+    slot.className = 'img-slot' + (img.imgData ? ' has-img' : (img.prompt ? ' has-prompt-only' : ''));
+    slot.id = `${vid}-slot-${idx}`;
+
+    const dotColor = {empty:'var(--dim)',drafted:'var(--orange)',ready:'var(--accent)',done:'var(--accent2)'}[img.status]||'var(--dim)';
+
+    slot.innerHTML = `
+      <div class="img-num">#${img.id}</div>
+      <div class="img-status-dot" style="background:${dotColor}"></div>
+      <div class="slot-img-area" id="${vid}-imgarea-${idx}">
+        ${img.imgData
+          ? `<img class="slot-preview" src="${img.imgData}" alt="img ${img.id}">`
+          : `<div class="slot-upload-hint">📷</div><div class="slot-upload-label">upload image</div>`
+        }
+        <input type="file" class="slot-img-input" accept="image/*"
+          onchange="handleImgFile('${vid}',${idx},this)">
+      </div>
+      <div class="slot-body">
+        <textarea class="slot-prompt-input" placeholder="Prompt — subject, mood, lighting, style..."
+          oninput="updatePrompt('${vid}',${idx},this.value)">${img.prompt}</textarea>
+      </div>
+      <div class="slot-footer">
+        <select class="slot-type-sel" onchange="updateField('${vid}',${idx},'type',this.value)">
+          <option value="">— shot type</option>
+          ${['Wide','Close-up','Medium','POV','Aerial','Macro','Over-shoulder','Title Card','B-Roll','Transition'].map(t=>`<option ${img.type===t?'selected':''}>${t}</option>`).join('')}
+        </select>
+        <button class="slot-status-btn s-${img.status}" onclick="cycleStatus('${vid}',${idx})">${statusTxt(img.status)}</button>
+        ${img.imgData ? `<button class="slot-del" title="Remove image" onclick="removeImg('${vid}',${idx})">🗑</button>` : ''}
+      </div>
+    `;
+    grid.appendChild(slot);
+  });
+}
+
+function handleImgFile(vid, idx, input){
+  const file = input.files[0];
+  if(!file) return;
+  // Compress large images
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 800;
+      let w = img.width, h = img.height;
+      if(w > MAX){ h = Math.round(h * MAX/w); w = MAX; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const data = canvas.toDataURL('image/jpeg', 0.75);
+      S.videos[vid].images[idx].imgData = data;
+      S.videos[vid].images[idx].imgName = file.name;
+      if(!S.videos[vid].images[idx].prompt) {
+        // auto bump status to drafted
+      }
+      if(S.videos[vid].images[idx].status === 'empty') S.videos[vid].images[idx].status = 'drafted';
+      saveS();
+      refreshSlot(vid, idx);
+      updatePBar(vid);
+      toast('#'+S.videos[vid].images[idx].id+' image uploaded');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeImg(vid, idx){
+  S.videos[vid].images[idx].imgData = null;
+  S.videos[vid].images[idx].imgName = '';
+  saveS();
+  refreshSlot(vid, idx);
+}
+
+function refreshSlot(vid, idx){
+  renderSlots(vid, currentFilter[vid] || 'all');
+  updatePBar(vid);
+}
+
+function updatePrompt(vid, idx, val){
+  S.videos[vid].images[idx].prompt = val;
+  if(val.trim() && S.videos[vid].images[idx].status === 'empty'){
+    S.videos[vid].images[idx].status = 'drafted';
+    refreshSlot(vid, idx);
+    return;
+  }
+  saveS();
+  updatePBar(vid);
+}
+
+function updateField(vid, idx, field, val){
+  S.videos[vid].images[idx][field] = val;
+  saveS();
+}
+
+function cycleStatus(vid, idx){
+  const order = ['empty','drafted','ready','done'];
+  const cur = S.videos[vid].images[idx].status;
+  S.videos[vid].images[idx].status = order[(order.indexOf(cur)+1)%order.length];
+  saveS();
+  refreshSlot(vid, idx);
+}
+
+function markAllReady(vid){
+  S.videos[vid].images.forEach(img => { if(img.prompt.trim()) img.status = 'ready'; });
+  saveS();
+  renderSlots(vid, currentFilter[vid]||'all');
+  updatePBar(vid);
+  toast('All prompts marked ready');
+}
+
+function filterSlots(vid, filter, el){
+  document.querySelectorAll(`#${vid}-filter .filter-btn`).forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  renderSlots(vid, filter);
+}
+
+function statusTxt(s){ return {empty:'empty',drafted:'draft',ready:'ready',done:'done ✓'}[s]||s; }
+
+function updatePBar(vid){
+  const cfg = VIDS.find(v=>v.id===vid);
+  const imgs = S.videos[vid].images;
+  const f = imgs.filter(i=>i.prompt.trim()||i.imgData).length;
+  const pct = Math.round(f/cfg.count*100);
+  const bar = document.getElementById(vid+'-pbar');
+  const lbl = document.getElementById(vid+'-plbl');
+  if(bar) bar.style.width = pct+'%';
+  if(lbl) lbl.textContent = f+'/'+cfg.count;
+  updateBadges();
+}
+
+function updateBadges(){
+  VIDS.forEach(v=>{
+    const f = S.videos[v.id].images.filter(i=>i.prompt.trim()||i.imgData).length;
+    const b = document.getElementById('badge-'+v.id.replace('video','v'));
+    if(b) b.textContent = f+'/'+v.count;
+  });
+}
+
+// ── SAVE VIDEO ────────────────────────────────────────────
+function saveVid(vid){
+  const sc = document.getElementById(vid+'-script');
+  const vs = document.getElementById(vid+'-vstyle');
+  const vn = document.getElementById(vid+'-vnotes');
+  if(sc) S.videos[vid].script = sc.value;
+  if(vs) S.videos[vid].voice_style = vs.value;
+  if(vn) S.videos[vid].voice_notes = vn.value;
+  saveS();
+  toast('Video saved ✓');
+}
+
+function saveAll(){
+  VIDS.forEach(v => {
+    const sc = document.getElementById(v.id+'-script');
+    const vs = document.getElementById(v.id+'-vstyle');
+    const vn = document.getElementById(v.id+'-vnotes');
+    if(sc) S.videos[v.id].script = sc.value;
+    if(vs) S.videos[v.id].voice_style = vs.value;
+    if(vn) S.videos[v.id].voice_notes = vn.value;
+  });
+  saveS();
+  toast('All saved ✓');
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────
+function renderDash(){
+  const allImgs = VIDS.flatMap(v=>S.videos[v.id].images);
+  const total = allImgs.length;
+  const filled = allImgs.filter(i=>i.prompt.trim()||i.imgData).length;
+  const withImg = allImgs.filter(i=>i.imgData).length;
+  const scripts = VIDS.filter(v=>S.videos[v.id].script.trim()).length;
+  const voices = VIDS.filter(v=>S.videos[v.id].voiceData).length;
+
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><div class="stat-l">Total Slots</div><div class="stat-v" style="color:var(--accent)">${total}</div><div class="stat-s">across 3 videos</div></div>
+    <div class="stat"><div class="stat-l">Prompts Filled</div><div class="stat-v" style="color:var(--accent2)">${filled}</div><div class="stat-s">${Math.round(filled/total*100)}% complete</div></div>
+    <div class="stat"><div class="stat-l">Images Uploaded</div><div class="stat-v" style="color:var(--orange)">${withImg}</div><div class="stat-s">from gallery</div></div>
+    <div class="stat"><div class="stat-l">Voices Ready</div><div class="stat-v" style="color:var(--accent3)">${voices}/3</div><div class="stat-s">${scripts}/3 scripts</div></div>
+  `;
+
+  document.getElementById('dash-scripts').innerHTML = VIDS.map(v=>{
+    const sc = S.videos[v.id].script.trim();
+    const wc = sc ? sc.split(/\s+/).length : 0;
+    return `<div class="sov-row">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:7px;height:7px;border-radius:50%;background:${v.color}"></div>
+        <span style="font-size:13px;font-weight:700">${v.label}</span>
+      </div>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;color:${sc?'var(--accent)':'var(--dim)'}">${sc?wc+' words':'not written'}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('dash-voice').innerHTML = VIDS.map(v=>{
+    const vs = S.videos[v.id];
+    return `<div class="sov-row">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:7px;height:7px;border-radius:50%;background:${v.color}"></div>
+        <span style="font-size:13px;font-weight:700">${v.label}</span>
+      </div>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;color:${vs.voiceData?'var(--accent2)':'var(--dim)'}">${vs.voiceData?'✓ '+vs.voiceName:'not uploaded'}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('dash-progress').innerHTML = VIDS.map(v=>{
+    const imgs = S.videos[v.id].images;
+    const f = imgs.filter(i=>i.prompt.trim()||i.imgData).length;
+    const withI = imgs.filter(i=>i.imgData).length;
+    const pct = Math.round(f/v.count*100);
+    return `
+      <div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+          <span style="font-size:12px;font-weight:800;color:${v.color}">${v.label}</span>
+          <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">${f}/${v.count} prompts · ${withI} images</span>
+        </div>
+        <div class="pbar"><div class="pbar-fill" style="width:${pct}%;background:${v.color}"></div></div>
+      </div>`;
+  }).join('');
+
+  updateBadges();
+}
+
+// ── SCHEDULE ─────────────────────────────────────────────
+function renderSchedule(){
+  const today = ['SUN','MON','TUE','WED','THU','FRI','SAT'][new Date().getDay()];
+  document.getElementById('wgrid').innerHTML = WEEK.map(d=>`
+    <div class="wday ${d.d===today?'today':''}">
+      <div class="wday-name">${d.d}${d.d===today?' ◀':''}</div>
+      <div class="wday-task" style="color:${d.color}">${d.task}</div>
+      <div class="wday-desc">${d.desc}</div>
+    </div>`).join('');
+
+  const tl = document.getElementById('task-list');
+  tl.innerHTML = S.sunday_tasks.map((t,i)=>`
+    <div class="stask ${t.done?'done':''}">
+      <input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${i})">
+      <span class="stask-text">${t.text}</span>
+      <button class="stask-del" onclick="removeTask(${i})">✕</button>
+    </div>`).join('');
+}
+
+function toggleTask(i){ S.sunday_tasks[i].done=!S.sunday_tasks[i].done; saveS(); renderSchedule(); }
+function removeTask(i){ S.sunday_tasks.splice(i,1); saveS(); renderSchedule(); }
+function addTask(){
+  const t = prompt('New task:');
+  if(t&&t.trim()){ S.sunday_tasks.push({id:Date.now(),text:t.trim(),done:false}); saveS(); renderSchedule(); }
+}
+
+// ── EXPORT ───────────────────────────────────────────────
+function renderExport(){
+  let out = '';
+  VIDS.forEach(v=>{
+    const vs = S.videos[v.id];
+    out += `=== ${v.label.toUpperCase()} ===\n`;
+    out += `VOICE: ${vs.voiceName||'not uploaded'} | Style: ${vs.voice_style||'—'} | Notes: ${vs.voice_notes||'—'}\n`;
+    out += `SCRIPT (${wordCount(vs.script)} words):\n${vs.script||'(empty)'}\n\n`;
+    out += `IMAGE PROMPTS:\n`;
+    vs.images.forEach(img=>{
+      if(img.prompt.trim()||img.imgData){
+        out += `  #${img.id} [${img.type||'—'}][${img.status}]${img.imgData?'[IMG✓]':''} ${img.prompt||'(no prompt)'}\n`;
+      }
+    });
+    out += '\n';
+  });
+  document.getElementById('export-pre').textContent = out || '(nothing saved yet)';
+}
+
+function exportJSON(){
+  // strip image data for smaller JSON — keep voice data
+  const light = JSON.parse(JSON.stringify(S));
+  VIDS.forEach(v=>{
+    light.videos[v.id].images.forEach(img=>{ img.imgData = img.imgData ? '[IMAGE_DATA]' : null; });
+  });
+  const blob = new Blob([JSON.stringify(light,null,2)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'content-vault-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  toast('JSON downloaded');
+}
+
+function copyExport(){
+  navigator.clipboard.writeText(document.getElementById('export-pre').textContent)
+    .then(()=>toast('Copied!'));
+}
+
+// ── HELPERS ───────────────────────────────────────────────
+function wordCount(s){ return s ? s.trim().split(/\s+/).filter(Boolean).length : 0; }
+function wcUpdate(vid){
+  const el = document.getElementById(vid+'-wc');
+  const ta = document.getElementById(vid+'-script');
+  if(el&&ta) el.textContent = wordCount(ta.value)+' words';
+}
+
+function toast(msg, bg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = bg||'var(--accent)';
+  t.style.color = bg ? '#fff' : '#000';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+// ── INIT ─────────────────────────────────────────────────
+(function init(){
+  const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const labels = ['LOAD DAY','V1 GEN','V1 EDIT','V2 GEN','V2 EDIT','V3 GEN','V3 EDIT'];
+  const d = new Date().getDay();
+  document.getElementById('dayChip').textContent = days[d]+' · '+labels[d];
+  renderDash();
+})();
+</script>
+</body>
+</html>
